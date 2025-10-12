@@ -44,14 +44,13 @@ def get_neko_containers():
 async def home():
     containers = get_neko_containers()
     
-    # Corrected f-string with escaped curly braces for CSS and JavaScript
     html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Neko Docker Grid</title>
+        <title>Neko Dockers</title>
         <style>
             * {{
                 margin: 0;
@@ -69,8 +68,31 @@ async def home():
             
             h1 {{
                 text-align: center;
-                margin-bottom: 30px;
+                margin-bottom: 15px;
                 color: #4a9eff;
+            }}
+
+            .controls {{
+                text-align: center;
+                margin-bottom: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                color: #aaa;
+            }}
+
+            .controls label {{
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+            }}
+
+            #countdown {{
+                font-weight: 600;
+                min-width: 150px;
+                text-align: left;
             }}
             
             .grid-container {{
@@ -242,8 +264,16 @@ async def home():
         </style>
     </head>
     <body>
-        <h1>🖥️ Neko Docker Grid</h1>
+        <h1>🖥️ Neko Dockers</h1>
         
+        <div class="controls">
+            <label for="autoRefreshCheckbox">
+                <input type="checkbox" id="autoRefreshCheckbox">
+                Auto Refresh
+            </label>
+            <span id="countdown"></span>
+        </div>
+
         <div class="grid-container" id="gridContainer">
             {''.join([f'''
             <div class="grid-item" onclick="openModal('{c['url']}', '{c['name']}', '{c['id']}')">
@@ -276,6 +306,11 @@ async def home():
         
         <script>
             let currentContainerId = null;
+            const refreshIntervalSeconds = 30;
+            let countdown = refreshIntervalSeconds;
+
+            const autoRefreshCheckbox = document.getElementById('autoRefreshCheckbox');
+            const countdownDisplay = document.getElementById('countdown');
             
             function openModal(url, name, containerId) {{
                 const modal = document.getElementById('modal');
@@ -332,13 +367,42 @@ async def home():
                 }}
             }});
             
-            // Refresh page every 30 seconds only if modal is not open
+            // Main timer loop, runs every second
             setInterval(() => {{
                 const modal = document.getElementById('modal');
-                if (!modal.classList.contains('active')) {{
-                    location.reload();
+                
+                if (autoRefreshCheckbox.checked && !modal.classList.contains('active')) {{
+                    countdown--;
+                    countdownDisplay.textContent = `Refreshing in ${{countdown}}s...`;
+                    
+                    if (countdown <= 0) {{
+                        location.reload();
+                    }}
+                }} else {{
+                    countdown = refreshIntervalSeconds; // Reset for when it resumes
+                    if (modal.classList.contains('active')) {{
+                        countdownDisplay.textContent = 'Paused (modal open)';
+                    }} else {{
+                        countdownDisplay.textContent = 'Auto-refresh disabled';
+                    }}
                 }}
-            }}, 30000);
+            }}, 1000);
+
+            // Handle checkbox changes
+            autoRefreshCheckbox.addEventListener('change', function() {{
+                localStorage.setItem('autoRefreshEnabled', this.checked);
+                if (this.checked) {{
+                    countdown = refreshIntervalSeconds; // Reset countdown on re-enable
+                }}
+            }});
+
+            // On page load, set checkbox from memory
+            document.addEventListener('DOMContentLoaded', () => {{
+                // Defaults to true if no setting is found
+                const isAutoRefreshEnabled = localStorage.getItem('autoRefreshEnabled') !== 'false';
+                autoRefreshCheckbox.checked = isAutoRefreshEnabled;
+            }});
+
         </script>
     </body>
     </html>
@@ -364,4 +428,4 @@ async def kill_container(container_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8731)
