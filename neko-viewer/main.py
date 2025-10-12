@@ -52,6 +52,8 @@ async def home():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Neko Dockers</title>
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+            
             * {{
                 margin: 0;
                 padding: 0;
@@ -59,17 +61,69 @@ async def home():
             }}
             
             body {{
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-                background: #1a1a1a;
-                color: #fff;
+                font-family: 'Press Start 2P', monospace;
+                background: #1a0d2e;
+                color: #00ff88;
                 padding: 20px;
                 overflow-x: hidden;
+                position: relative;
+                image-rendering: pixelated;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: crisp-edges;
+            }}
+            
+            body::before {{
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: 
+                    repeating-linear-gradient(
+                        0deg,
+                        rgba(0, 255, 136, 0.03) 0px,
+                        transparent 1px,
+                        transparent 2px,
+                        rgba(0, 255, 136, 0.03) 3px
+                    );
+                pointer-events: none;
+                z-index: 1;
+                animation: scanlines 8s linear infinite;
+            }}
+            
+            @keyframes scanlines {{
+                0% {{ transform: translateY(0); }}
+                100% {{ transform: translateY(4px); }}
             }}
             
             h1 {{
                 text-align: center;
-                margin-bottom: 15px;
-                color: #4a9eff;
+                margin-bottom: 25px;
+                color: #ff3366;
+                font-size: 24px;
+                text-shadow: 
+                    3px 3px 0px #00ff88,
+                    6px 6px 0px rgba(0, 255, 136, 0.3);
+                letter-spacing: 2px;
+                position: relative;
+                z-index: 2;
+                animation: glitch 3s infinite;
+            }}
+            
+            @keyframes glitch {{
+                0%, 90%, 100% {{
+                    transform: translate(0);
+                }}
+                92% {{
+                    transform: translate(-2px, 2px);
+                }}
+                94% {{
+                    transform: translate(2px, -2px);
+                }}
+                96% {{
+                    transform: translate(-2px, -2px);
+                }}
             }}
 
             .controls {{
@@ -78,49 +132,95 @@ async def home():
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 15px;
-                color: #aaa;
+                gap: 20px;
+                color: #00ff88;
+                position: relative;
+                z-index: 2;
+                font-size: 10px;
             }}
 
             .controls label {{
                 display: flex;
                 align-items: center;
-                gap: 5px;
+                gap: 8px;
                 cursor: pointer;
+                padding: 8px 12px;
+                background: rgba(255, 51, 102, 0.1);
+                border: 2px solid #ff3366;
+                box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+            }}
+            
+            .controls label:hover {{
+                background: rgba(255, 51, 102, 0.2);
+                box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+            }}
+            
+            input[type="checkbox"] {{
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+                accent-color: #ff3366;
             }}
 
             #countdown {{
                 font-weight: 600;
-                min-width: 150px;
-                text-align: left;
+                min-width: 200px;
+                text-align: center;
+                color: #00ff88;
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
             }}
             
             .grid-container {{
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-                gap: 20px;
+                gap: 25px;
                 max-width: 1600px;
                 margin: 0 auto;
+                position: relative;
+                z-index: 2;
             }}
             
             .grid-item {{
-                background: #2a2a2a;
-                border-radius: 8px;
+                background: #0f0820;
+                border: 3px solid #ff3366;
+                box-shadow: 
+                    0 0 20px rgba(255, 51, 102, 0.4),
+                    inset 0 0 20px rgba(0, 255, 136, 0.1);
                 overflow: hidden;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
                 cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
+                transition: all 0.3s;
+                position: relative;
+            }}
+            
+            .grid-item::before {{
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, #ff3366, #00ff88, #ff3366);
+                z-index: -1;
+                opacity: 0;
+                transition: opacity 0.3s;
             }}
             
             .grid-item:hover {{
-                transform: translateY(-4px);
-                box-shadow: 0 8px 12px rgba(74, 158, 255, 0.3);
+                transform: translateY(-8px);
+                box-shadow: 
+                    0 0 40px rgba(255, 51, 102, 0.6),
+                    0 0 60px rgba(0, 255, 136, 0.4),
+                    inset 0 0 30px rgba(0, 255, 136, 0.2);
+            }}
+            
+            .grid-item:hover::before {{
+                opacity: 0.3;
             }}
             
             .grid-header {{
-                padding: 12px 16px;
-                background: #333;
-                border-bottom: 2px solid #4a9eff;
+                padding: 15px;
+                background: linear-gradient(135deg, #0f0820 0%, #1a0d2e 100%);
+                border-bottom: 3px solid #00ff88;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -131,31 +231,37 @@ async def home():
             }}
             
             .kill-btn {{
-                background: #ff4757;
-                color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 4px;
+                background: linear-gradient(135deg, #cc0052 0%, #ff3366 100%);
+                color: #ffffff;
+                border: 2px solid #ff3366;
+                padding: 8px 15px;
                 cursor: pointer;
-                font-size: 12px;
-                font-weight: 600;
-                transition: background 0.2s;
+                font-size: 8px;
+                font-family: 'Press Start 2P', monospace;
+                transition: all 0.3s;
                 margin-left: 10px;
+                box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
             }}
             
             .kill-btn:hover {{
-                background: #ff3838;
+                background: linear-gradient(135deg, #ff3366 0%, #ff3366 100%);
+                box-shadow: 0 0 20px rgba(255, 51, 102, 0.8);
+                transform: scale(1.05);
             }}
             
             .container-name {{
                 font-weight: 600;
-                font-size: 16px;
-                margin-bottom: 4px;
+                font-size: 11px;
+                margin-bottom: 8px;
+                color: #ff3366;
+                text-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
             }}
             
             .container-port {{
-                font-size: 14px;
-                color: #888;
+                font-size: 8px;
+                color: #00ff88;
+                text-shadow: 0 0 5px rgba(0, 255, 136, 0.6);
             }}
             
             .iframe-container {{
@@ -163,6 +269,8 @@ async def home():
                 height: 300px;
                 position: relative;
                 overflow: hidden;
+                border: 2px solid #00ff88;
+                background: #000;
             }}
             
             .grid-item iframe {{
@@ -170,6 +278,7 @@ async def home():
                 height: 100%;
                 border: none;
                 pointer-events: none;
+                filter: contrast(1.1) saturate(1.2);
             }}
             
             .modal {{
@@ -179,10 +288,11 @@ async def home():
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.9);
+                background: rgba(15, 8, 32, 0.95);
                 z-index: 1000;
                 align-items: center;
                 justify-content: center;
+                backdrop-filter: blur(10px);
             }}
             
             .modal.active {{
@@ -193,83 +303,105 @@ async def home():
                 width: 95%;
                 height: 95%;
                 position: relative;
-                background: #1a1a1a;
-                border-radius: 8px;
+                background: #0f0820;
+                border: 4px solid #ff3366;
+                box-shadow: 
+                    0 0 50px rgba(255, 51, 102, 0.6),
+                    0 0 100px rgba(0, 255, 136, 0.3),
+                    inset 0 0 30px rgba(0, 255, 136, 0.1);
                 overflow: hidden;
             }}
             
             .modal-header {{
-                padding: 16px 20px;
-                background: #2a2a2a;
+                padding: 20px;
+                background: linear-gradient(135deg, #0f0820 0%, #1a0d2e 100%);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                border-bottom: 2px solid #4a9eff;
+                border-bottom: 3px solid #00ff88;
             }}
             
             .modal-actions {{
                 display: flex;
-                gap: 10px;
+                gap: 15px;
             }}
             
             .kill-btn-modal {{
-                background: #ff4757;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
+                background: linear-gradient(135deg, #cc0052 0%, #ff3366 100%);
+                color: #ffffff;
+                border: 2px solid #ff3366;
+                padding: 10px 20px;
                 cursor: pointer;
-                font-size: 14px;
-                font-weight: 600;
-                transition: background 0.2s;
+                font-size: 10px;
+                font-family: 'Press Start 2P', monospace;
+                transition: all 0.3s;
+                box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
             }}
             
             .kill-btn-modal:hover {{
-                background: #ff3838;
+                background: linear-gradient(135deg, #ff3366 0%, #ff3366 100%);
+                box-shadow: 0 0 25px rgba(255, 51, 102, 0.8);
+                transform: scale(1.05);
             }}
             
             .modal-title {{
-                font-size: 18px;
+                font-size: 12px;
                 font-weight: 600;
+                color: #ff3366;
+                text-shadow: 0 0 10px rgba(255, 51, 102, 0.8);
             }}
             
             .close-btn {{
-                background: #ff4757;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
+                background: linear-gradient(135deg, #00aa5e 0%, #00ff88 100%);
+                color: #000;
+                border: 2px solid #00ff88;
+                padding: 10px 20px;
                 cursor: pointer;
-                font-size: 14px;
+                font-size: 10px;
+                font-family: 'Press Start 2P', monospace;
                 font-weight: 600;
-                transition: background 0.2s;
+                transition: all 0.3s;
+                box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+                text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
             }}
             
             .close-btn:hover {{
-                background: #ff3838;
+                background: linear-gradient(135deg, #00ff88 0%, #00ff88 100%);
+                box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
+                transform: scale(1.05);
             }}
             
             .modal-iframe {{
                 width: 100%;
-                height: calc(100% - 60px);
+                height: calc(100% - 80px);
                 border: none;
+                border-top: 2px solid #00ff88;
+                background: #000;
             }}
             
             .no-containers {{
                 text-align: center;
                 padding: 60px 20px;
-                color: #888;
-                font-size: 18px;
+                color: #ff3366;
+                font-size: 14px;
+                text-shadow: 0 0 20px rgba(255, 51, 102, 0.8);
+                animation: pulse 2s infinite;
+            }}
+            
+            @keyframes pulse {{
+                0%, 100% {{ opacity: 1; }}
+                50% {{ opacity: 0.6; }}
             }}
         </style>
     </head>
     <body>
-        <h1>🖥️ Neko Dockers</h1>
+        <h1>▓▒░ NEKO DOCKERS ░▒▓</h1>
         
         <div class="controls">
             <label for="autoRefreshCheckbox">
                 <input type="checkbox" id="autoRefreshCheckbox">
-                Auto Refresh
+                AUTO REFRESH
             </label>
             <span id="countdown"></span>
         </div>
@@ -279,16 +411,16 @@ async def home():
             <div class="grid-item" onclick="openModal('{c['url']}', '{c['name']}', '{c['id']}')">
                 <div class="grid-header">
                     <div class="header-info">
-                        <div class="container-name">{c['name']}</div>
-                        <div class="container-port">Port: {c['port']} | ID: {c['id']}</div>
+                        <div class="container-name">▸ {c['name']}</div>
+                        <div class="container-port">PORT: {c['port']} | ID: {c['id']}</div>
                     </div>
-                    <button class="kill-btn" onclick="event.stopPropagation(); killContainer('{c['id']}')">🗑️ Kill</button>
+                    <button class="kill-btn" onclick="event.stopPropagation(); killContainer('{c['id']}')">✖ KILL</button>
                 </div>
                 <div class="iframe-container">
                     <iframe src="{c['url']}" loading="lazy"></iframe>
                 </div>
             </div>
-            ''' for c in containers]) if containers else '<div class="no-containers">No Neko containers running</div>'}
+            ''' for c in containers]) if containers else '<div class="no-containers">▓▒░ NO NEKO CONTAINERS RUNNING ░▒▓</div>'}
         </div>
         
         <div class="modal" id="modal">
@@ -296,8 +428,8 @@ async def home():
                 <div class="modal-header">
                     <div class="modal-title" id="modalTitle"></div>
                     <div class="modal-actions">
-                        <button class="kill-btn-modal" id="modalKillBtn" onclick="killContainer(null, true)">🗑️ Kill</button>
-                        <button class="close-btn" onclick="closeModal()">✕ Close</button>
+                        <button class="kill-btn-modal" id="modalKillBtn" onclick="killContainer(null, true)">✖ KILL</button>
+                        <button class="close-btn" onclick="closeModal()">✕ CLOSE</button>
                     </div>
                 </div>
                 <iframe class="modal-iframe" id="modalIframe" src=""></iframe>
@@ -319,7 +451,7 @@ async def home():
                 
                 currentContainerId = containerId;
                 modalIframe.src = url;
-                modalTitle.textContent = name;
+                modalTitle.textContent = '▸ ' + name;
                 modal.classList.add('active');
             }}
             
@@ -335,7 +467,7 @@ async def home():
             async function killContainer(containerId, fromModal = false) {{
                 const idToKill = fromModal ? currentContainerId : containerId;
                 
-                if (!confirm('Are you sure you want to kill this container?')) {{
+                if (!confirm('ARE YOU SURE YOU WANT TO KILL THIS CONTAINER?')) {{
                     return;
                 }}
                 
@@ -347,16 +479,16 @@ async def home():
                     const result = await response.json();
                     
                     if (result.success) {{
-                        alert('Container killed successfully');
+                        alert('CONTAINER KILLED SUCCESSFULLY');
                         if (fromModal) {{
                             closeModal();
                         }}
                         location.reload();
                     }} else {{
-                        alert('Failed to kill container: ' + result.message);
+                        alert('FAILED TO KILL CONTAINER: ' + result.message);
                     }}
                 }} catch (error) {{
-                    alert('Error: ' + error.message);
+                    alert('ERROR: ' + error.message);
                 }}
             }}
             
@@ -373,17 +505,17 @@ async def home():
                 
                 if (autoRefreshCheckbox.checked && !modal.classList.contains('active')) {{
                     countdown--;
-                    countdownDisplay.textContent = `Refreshing in ${{countdown}}s...`;
+                    countdownDisplay.textContent = `REFRESHING IN ${{countdown}}S...`;
                     
                     if (countdown <= 0) {{
                         location.reload();
                     }}
                 }} else {{
-                    countdown = refreshIntervalSeconds; // Reset for when it resumes
+                    countdown = refreshIntervalSeconds;
                     if (modal.classList.contains('active')) {{
-                        countdownDisplay.textContent = 'Paused (modal open)';
+                        countdownDisplay.textContent = 'PAUSED (MODAL OPEN)';
                     }} else {{
-                        countdownDisplay.textContent = 'Auto-refresh disabled';
+                        countdownDisplay.textContent = 'AUTO-REFRESH DISABLED';
                     }}
                 }}
             }}, 1000);
@@ -392,13 +524,12 @@ async def home():
             autoRefreshCheckbox.addEventListener('change', function() {{
                 localStorage.setItem('autoRefreshEnabled', this.checked);
                 if (this.checked) {{
-                    countdown = refreshIntervalSeconds; // Reset countdown on re-enable
+                    countdown = refreshIntervalSeconds;
                 }}
             }});
 
             // On page load, set checkbox from memory
             document.addEventListener('DOMContentLoaded', () => {{
-                // Defaults to true if no setting is found
                 const isAutoRefreshEnabled = localStorage.getItem('autoRefreshEnabled') !== 'false';
                 autoRefreshCheckbox.checked = isAutoRefreshEnabled;
             }});
