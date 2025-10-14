@@ -2,19 +2,24 @@
 
 PYTHON="/home/jebin/.pyenv/versions/neko-viewer_env/bin/python"
 SCRIPT="/home/jebin/git/neko-apps/neko-viewer/main.py"
-#glyphs
+PORT=8731
+
+# Glyphs
 ICON_RUNNING="󰄛  "
 ICON_STOPPED="󰄛💤 "
 
 # Find running main.py process using this Python
 PID=$(pgrep -f "$PYTHON.*$SCRIPT")
 
+# Check if port is in use (listening)
+PORT_ACTIVE=$(ss -tuln | grep -q ":$PORT " && echo 1 || echo 0)
+
 MODE="$1"
 
 case "$MODE" in
     1)
         # Only check status
-        if [ -n "$PID" ]; then
+        if [ -n "$PID" ] || [ "$PORT_ACTIVE" -eq 1 ]; then
             echo "$ICON_RUNNING"
         else
             echo "$ICON_STOPPED"
@@ -22,9 +27,9 @@ case "$MODE" in
         ;;
     2)
         # Kill if running; if not running, start
-        if [ -n "$PID" ]; then
+        if [ -n "$PID" ] || [ "$PORT_ACTIVE" -eq 1 ]; then
             echo "$ICON_STOPPED"
-            kill $PID
+            [ -n "$PID" ] && kill $PID
             sleep 1
             notify-send "Neko Viewer Stopped"
         else
