@@ -14,7 +14,7 @@
   "DefaultPopupsSetting": 2,
   "DownloadRestrictions": 3,
   "VideoCaptureAllowed": true,
-  "AllowFileSelectionDialogs": false,
+  "AllowFileSelectionDialogs": true,
   "PromptForDownloadLocation": false,
   "BookmarkBarEnabled": false,
   "PasswordManagerEnabled": false,
@@ -22,8 +22,6 @@
     "file:///home/neko/Downloads"
   ],
   "URLBlocklist": [
-    "file://*",
-    "chrome://policy"
   ],
   "ExtensionInstallForcelist": [
     "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx",
