@@ -8,10 +8,14 @@ ARG SRC_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd
 RUN set -eux; \
     apt-get update; \
     wget -O /tmp/google-chrome.deb "${SRC_URL}"; \
-    apt-get install -y --no-install-recommends openbox socat xdotool scrot xclip /tmp/google-chrome.deb; \
+    # Install Chrome first (will fail), then fix broken deps
+    dpkg -i /tmp/google-chrome.deb || true; \
+    apt-get install -fy --no-install-recommends; \
+    # Now install the rest
+    apt-get install -y --no-install-recommends openbox socat xdotool scrot xclip; \
     # Clean up
     apt-get clean -y; \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/* /tmp/google-chrome.deb
 
 # Copy configuration files
 COPY supervisord.conf /etc/neko/supervisord/google-chrome.conf
