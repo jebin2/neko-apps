@@ -10,9 +10,15 @@ RUN set -eux; \
     apt-get install -fy --no-install-recommends; \
         rm /tmp/google-chrome.deb; \
     else \
-        # ARM64 fallback: install Chromium and symlink it as google-chrome
-        apt-get install -y --no-install-recommends chromium; \
+        # ARM64: install Chromium from Debian unstable for a recent version \
+        echo 'deb http://deb.debian.org/debian unstable main' > /etc/apt/sources.list.d/unstable.list; \
+        # Pin unstable low so only explicit installs pull from it \
+        printf 'Package: *\nPin: release a=unstable\nPin-Priority: 100\n' > /etc/apt/preferences.d/unstable; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends -t unstable chromium; \
         ln -sf /usr/bin/chromium /usr/bin/google-chrome; \
+        # Clean up unstable source to avoid future surprises \
+        rm -f /etc/apt/sources.list.d/unstable.list /etc/apt/preferences.d/unstable; \
     fi; \
     apt-get install -y --no-install-recommends openbox socat xdotool scrot xclip; \
     apt-get clean -y; \
