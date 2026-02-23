@@ -10,15 +10,12 @@ RUN set -eux; \
     apt-get install -fy --no-install-recommends; \
         rm /tmp/google-chrome.deb; \
     else \
-        # ARM64: install Chromium from Debian unstable for a recent version \
-        echo 'deb http://deb.debian.org/debian unstable main' > /etc/apt/sources.list.d/unstable.list; \
-        # Pin unstable low so only explicit installs pull from it \
-        printf 'Package: *\nPin: release a=unstable\nPin-Priority: 100\n' > /etc/apt/preferences.d/unstable; \
+        # ARM64: install Chromium from Debian bookworm (newer than bullseye) \
+        echo 'deb http://deb.debian.org/debian bookworm main' > /etc/apt/sources.list.d/bookworm.list; \
         apt-get update; \
-        apt-get install -y --no-install-recommends -t unstable chromium; \
+        apt-get install -y --no-install-recommends chromium/bookworm; \
         ln -sf /usr/bin/chromium /usr/bin/google-chrome; \
-        # Clean up unstable source to avoid future surprises \
-        rm -f /etc/apt/sources.list.d/unstable.list /etc/apt/preferences.d/unstable; \
+        rm -f /etc/apt/sources.list.d/bookworm.list; \
     fi; \
     apt-get install -y --no-install-recommends openbox socat xdotool scrot xclip; \
     apt-get clean -y; \
